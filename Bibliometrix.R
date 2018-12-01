@@ -8,8 +8,8 @@
 ###################################################################################
 
 # Autor: Jose Storopoli, UNINOVE
-# Versao 1
-# 15 de Setembro de 2018
+# Versao 2
+# 1 de Dezembro de 2018
 
 # !!! SCOPUS APENAS ACEITA BibTeX(.bib) !!!
 # !!! WEB OF SCIENCE ACEITA BibTeX E PLAINTEXT(.txt)!!!
@@ -83,17 +83,22 @@ metatagAU_UN <- metaTagExtraction(M, Field = "AU_UN", sep = ";", aff.disamb = TR
 metatagTI_TM <- termExtraction(M, Field = "TI",
                                remove.numbers=TRUE, remove.terms=NULL, verbose=TRUE, stemming = TRUE)
                               #Extracao dos termos do Titulo
+metatagTI_TM$TI <- metatagTI_TM$TI_TM #forcar os metatags para a coluna TI do metatag_TI_TM
 metatagAB_TM <- termExtraction(M, Field = "AB",
                                remove.numbers=TRUE, remove.terms=NULL, verbose=TRUE, stemming = TRUE)
                               #Extracao dos termos do Abstract
+metatagAB_TM$AB <- metatagAB_TM$AB_TM #forcar os metatags para a coluna AB do metatag_AB_TM
 metatagDE_TM <- termExtraction(M, Field = "DE",
                                remove.numbers=TRUE, remove.terms=NULL, verbose=TRUE, stemming = TRUE)
                               #Extracao dos termos das Palavras=chave
+metatagDE_TM$DE <- metatagDE_TM$DE_TM #forcar os metatags para a coluna AB do metatag_AB_TM
 metatagCR_TM <- metaTagExtraction(M, Field = "CR",
                                   remove.numbers=FALSE, remove.terms=NULL, stemming = FALSE,
                                   sep = ";")
                               #Extracao dos termos das Referencias
 #################### REDE BIPARTITE DE COCITACAO ###################
+#OBS voce pode usar o type="vosviewer" para exportar a rede para VOSVIEWER
+
 #Artigos
 NetMatrix <- biblioNetwork(M, analysis = "co-citation", network = "references", sep = ";")
 net=networkPlot(NetMatrix,  normalize = "salton", weighted=NULL, n = 20, #n= 20
@@ -190,14 +195,6 @@ net=networkPlot(NetMatrix,  normalize = "salton", weighted=NULL, n = 10, #n= 10
                 Title = "Abstract content Co-occurrences", type = "fruchterman", size=5,size.cex=T, 
                 remove.multiple=TRUE,labelsize=0.8,label.n=10,label.cex=F)
 netstat <- networkStat(NetMatrix)
-
-#University collaboration
-NetMatrix <- biblioNetwork(metatagAU_UN, analysis = "collaboration", network = "universities", sep = ";")
-net=networkPlot(NetMatrix,  normalize = "salton", weighted=NULL, n = 10, #n= 10
-                Title = "Abstract content Co-occurrences", type = "fruchterman", size=5,size.cex=T, 
-                remove.multiple=TRUE,labelsize=0.8,label.n=10,label.cex=F)
-netstat <- networkStat(NetMatrix)
-
 
 summary(netstat)
 #################### REDE BIPARTITE DE COLABORACAO ###################

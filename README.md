@@ -16,3 +16,6 @@ Couple of handy R Scripts that I use in a daily basis for Scientific Research
 * Standarizing Variables
 * Summarize Data
 * Stargazer - Beautiful APA Tables
+
+# Author
+Jose Eduardo Storopoli
