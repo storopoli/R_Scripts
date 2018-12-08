@@ -1,5 +1,0 @@
-require(caTools)
-set.seed(1234) 
-sample <- sample.split(data$anycolumn, SplitRatio = .75)
-train <- subset(data, sample == TRUE)
-test  <- subset(data, sample == FALSE)
