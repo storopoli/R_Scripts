@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1536854847476.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "92C06ED5",
+    "lastKnownWriteTime" : 3419473789575321445,
+    "last_content_update" : 1536854847476,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "CCC3F77",
+        "caption" : "savedrecs",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=savedrecs&cache_key=CCC3F77",
+        "displayedObservations" : 169,
+        "environment" : "",
+        "object" : "savedrecs",
+        "preview" : 0,
+        "totalObservations" : 169,
+        "variables" : 49
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
