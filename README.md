@@ -3,6 +3,7 @@ Couple of handy R Scripts that I use in a daily basis for Scientific Research
 
 ## List of Scripts
 * Bibliometrix
+	* Co-citation Matrix Generator
 * Bootstrapping
 * Correlation
 * Dummyfication
