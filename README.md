@@ -17,6 +17,7 @@ Couple of handy R Scripts that I use in a daily basis for Scientific Research
 * Standarizing Variables
 * Summarize Data
 * Stargazer - Beautiful APA Tables
+* KMO Function - Calculates the Kayser-Meyer-Olkin of not positive definite matrix by employing the Moore-Penrose inverse (*pseudoinverse*)
 
 # Author
 Jose Eduardo Storopoli
