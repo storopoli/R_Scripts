@@ -18,6 +18,13 @@ Couple of handy R Scripts that I use in a daily basis for Scientific Research
 * Summarize Data
 * Stargazer - Beautiful APA Tables
 * KMO Function - Calculates the Kayser-Meyer-Olkin of not positive definite matrix by employing the Moore-Penrose inverse (*pseudoinverse*)
+* Text Mining
+	* PDF text mining with with ```pdftools```
+	* Topic Modelling
+		* Text Pre-processing with ```tm```: *Stop Words* and *Stemming*
+		* Text Clustering: *k-means* and *hierarchical* clusters
+		* Latent Dirichlet Allocation (LDA) with ```topicmodels```
+		* Custom Function to convert ```topicmodels``` LDA output to input to LDA visualization with ```LDAvis```
 
 # Author
 Jose Eduardo Storopoli
