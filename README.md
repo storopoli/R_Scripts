@@ -28,3 +28,4 @@ Couple of handy R Scripts that I use in a daily basis for Scientific Research
 
 # Author
 Jose Eduardo Storopoli
+[e-mail](mailto:thestoropoli@gmail.com)
