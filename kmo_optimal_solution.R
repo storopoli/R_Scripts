@@ -1,11 +1,12 @@
-kmo_optimal_solution <- function(data){
+kmo_optimal_solution <- function(df){
   source("kmo_function.R")
-  df <- read.csv(data)
+  removed <- c()
   results <- kmo(df)
   while (any(results$individual < 0.5)){
     column <- sprintf(rownames(results$individual)[which.min(apply(results$individual,MARGIN=1,min))])
     #row <- match(column,names(df))
     #row <- as.numeric(gsub("([0-9]+).*$", "\\1", row))
+    removed <- c(removed, column)
     df <- df[, !(colnames(df) %in% column), drop=FALSE]
     #df <- df[-row, ]
     #rownames(df) <- NULL 
@@ -16,6 +17,7 @@ kmo_optimal_solution <- function(data){
   
   return(list(
     df = df,
+    removed = removed,
     results = results))
 
 }
