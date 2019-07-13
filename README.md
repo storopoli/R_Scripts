@@ -14,7 +14,7 @@ Couple of handy R Scripts that I use in a daily basis for Scientific Research
 * Polynomials
 * Random Sample Splitting
 * Recoding Variables
-* Standarizing Variables
+* Standardizing Variables
 * Summarize Data
 * Stargazer - Beautiful APA Tables
 * KMO & Communalities
@@ -23,7 +23,7 @@ Couple of handy R Scripts that I use in a daily basis for Scientific Research
 	* Communalities Optimal Solution - Uses the ```principal``` function from ```psych``` R package to generate a final solution with all the *individual communality > 0.5* in a dataframe and them returns a dataframe. Don't forget to set the argument ```nfactors```. 
 * Text Mining
 	* PDF text mining with with ```pdftools```
-	* Topic Modelling
+	* Topic Modeling
 		* Text Pre-processing with ```tm```: *Stop Words* and *Stemming*
 		* Text Clustering: *k-means* and *hierarchical* clusters
 		* Latent Dirichlet Allocation (LDA) with ```topicmodels```
@@ -32,3 +32,13 @@ Couple of handy R Scripts that I use in a daily basis for Scientific Research
 # Author
 Jose Eduardo Storopoli
 [e-mail](mailto:thestoropoli@gmail.com)
+
+# Road map
+1. Add *Scree Plot* to function ```Communalities Optimal Solution```
+	- Either before the *variable grinder* and after
+	- Add the different analysis (*elbow*, *acceleration* and *parallel*) from function ```Factor/Principal Components Analysis```
+	- Show *percentage of explained variance* by each component
+		- Also don't forget to add *cumulative explained variance*
+2. Add *Rotated Component Solution*  to function ```Communalities Optimal Solution```
+	- Using arguments (*varimax*, *oblimin*, etc.)
+	- Displaying the matrix sorted by sized and suppressing loadings below 0.4
