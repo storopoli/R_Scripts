@@ -17,9 +17,10 @@ Couple of handy R Scripts that I use in a daily basis for Scientific Research
 * Standarizing Variables
 * Summarize Data
 * Stargazer - Beautiful APA Tables
-* KMO
+* KMO & Communalities
 	* KMO Function - Calculates the Kayser-Meyer-Olkin of not positive definite matrix by employing the Moore-Penrose inverse (*pseudoinverse*)
 	* KMO Optimal Solution - Uses KMO Function to generate a final solution with all the *individual KMO > 0.5* in a dataframe and them returns a dataframe
+	* Communalities Optimal Solution - Uses the ```principal``` function from ```psych``` R package to generate a final solution with all the *individual communality > 0.5* in a dataframe and them returns a dataframe. Don't forget to set the argument ```nfactors```. 
 * Text Mining
 	* PDF text mining with with ```pdftools```
 	* Topic Modelling

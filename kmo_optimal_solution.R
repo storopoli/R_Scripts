@@ -1,4 +1,4 @@
-optimal_solution <- function(data){
+kmo_optimal_solution <- function(data){
   source("kmo_function.R")
   df <- read.csv(data)
   results <- kmo(df)
@@ -12,7 +12,7 @@ optimal_solution <- function(data){
     results <- kmo(df)
   }
   
-  write.csv(results$individual, "kmo_individual.csv")
+  #write.csv(results$individual, "kmo_individual.csv")
   
   return(list(
     df = df,
