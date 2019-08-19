@@ -15,7 +15,7 @@
 # !!! WEB OF SCIENCE ACEITA BibTeX E PLAINTEXT(.txt)!!!
 
 
-########################### INSTALAÇÃO ###########################
+########################### INSTALA??O ###########################
 install.packages("bibliometrix", dependencies = T)
 library(bibliometrix)
 library(data.table)
@@ -47,7 +47,6 @@ plot(x=results, k=10, pause=F)
 
 ########################### Referencias mais Citadas da Amostra  ########################### 
 CR <- citations(M, field = "article", sep = ";")
-M$CR[1]
 cbind(CR$Cited[1:20]) #ver os tops 20
 write.xlsx(CR, file = "CR.xlsx")
 

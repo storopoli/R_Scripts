@@ -5,12 +5,24 @@ D <- readFiles("Google Drive/Artigos/Bibliométrico - GeAS /brutos/GeAS-special
 M <- convert2df(D, format = "bibtex", dbsource = "scopus")
 write.csv2(M, "Bruto_Bibliometrix.csv")
 
+# voce precisa reimportar o dataset limpo CSV para o R
+M <- read.csv2("Bruto_Bibliometrix_limpo.csv", colClasses = rep('character', 62))
+
 # Citation Matrix
 M$CR<- stringr::str_replace_all(as.character(M$CR),"DOI;","DOI ")
+
+# top-cited 
+CR <- citations(M, field = "article", sep = ";")
+topcited <-rownames(cbind(CR$Cited[1:1300])) # escolher top-cited para cortar na co-cit
+write.csv2(CR, file = "CR.csv")
+
+# limpeza das citacoes
 Fi<-strsplit(M[,"CR"],";")
+Fi<-topcited
 #Fi<-lapply(Fi,trim.leading)
 #Fi<-lapply(Fi,function(l) l<-l[nchar(l)>10])  ## delete not congruent references
 uniqueField<-unique(unlist(Fi))
+uniqueField<-unique(unlist(topcited))
 #uniqueField<-uniqueField[!is.na(uniqueField)]
 #S<-gsub("\\).*",")",uniqueField)
 #S<-gsub(","," ",S)
@@ -41,23 +53,14 @@ for (i in 1:size[1]){
 
 #WF=WF[,!is.na(uniqueField)]
 
-# top-cited da amostra
-CR <- citations(M, field = "article", sep = ";")
-cbind(CR$Cited[1:20]) #ver os tops 20
-write.csv2(CR, file = "CR.csv")
-
-cited <- Matrix::diag(cocit_subset)
-cited2 <- as.data.frame(cbind(rownames(cocit_subset), cited))[order(-cited),]
-
-# voce precisa reimportar o dataset limpo CSV para o R
-M <- read.csv2("Bruto_Bibliometrix_limpo.csv", colClasses = rep('character', 62))
-
 # Para gerar a matriz quadrada de cocit
 WA = cocMatrix(M, Field = "CR", type = "sparse", binary = F)
 # delete empty vertices
 WF <- Matrix::Matrix(WF)
 cocit <- Matrix::crossprod(WF, WF)
 cocit <- cocit[nchar(colnames(cocit)) != 0, nchar(colnames(cocit)) != 0]
+cocit <- as.data.frame(as.matrix(cocit))
+write.csv2(cocit,"cocit_matrix.csv")
 
 
 # Subset Matrix

@@ -12,6 +12,7 @@ Couple of handy R Scripts that I use in a daily basis for Scientific Research
 * Dataset Import and General Wrangling
 * Linear Regression Assumptions
 * Polynomials
+* Network igraph
 * Random Sample Splitting
 * Recoding Variables
 * Standardizing Variables
@@ -45,6 +46,7 @@ Couple of handy R Scripts that I use in a daily basis for Scientific Research
 		* Latent Dirichlet Allocation (LDA) with ```topicmodels```
 		* Custom Function to convert ```topicmodels``` LDA output to input to LDA visualization with ```LDAvis```
 
-# Author
+## Author
+
 Jose Eduardo Storopoli
 [e-mail](mailto:thestoropoli@gmail.com)
