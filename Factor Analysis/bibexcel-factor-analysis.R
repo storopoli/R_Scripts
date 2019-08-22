@@ -2,6 +2,7 @@ library(readr)
 library(FactorAssumptions)
 library(psych)
 library(nFactors)
+library(ggplot2)
 options(scipen = 999)
 
 # Load the data
@@ -35,3 +36,16 @@ write.csv2(results$Vaccounted, "variance_accounted.csv")
 loadings <- as.table(printLoadings(results$loadings))
 write.csv2(loadings, "loadings.csv")
 fa.diagram(results, digits = 3, cut = 0.4, sort = T)
+
+# Export Tables and Loadings
+df <- data.frame(unclass(results$loadings), 
+                 communalities = results$communalities, 
+                 uniqueness = results$uniqueness,
+                 complexity = results$complexity)
+round(df,2)
+
+# LaTeX export
+df2latex(cor(data), short.names = T, apa = T, rowlabels = T,
+         caption = "Correlation Matrix")
+fa2latex(results, digits = 2, rowlabels = T, apa = T, short.names = T, cut = 0.4,
+         heading = "Rotated Component Matrix - Varimax")

@@ -8,14 +8,14 @@ factor <- read.csv2("node-factor.csv", stringsAsFactors = F)
 # Creating a adjacency matrix
 g <- graph_from_adjacency_matrix(as.matrix(df), mode = "undirected")
 # Importing from Pajek .net file
-g <- read.graph("~/Desktop/Bib-B-schools-v2/coupling/min-1-edge.net", format = "pajek")
+g <- read.graph("~/Desktop/Bib-B-schools-v2/co-cit/co-cit.net", format = "pajek")
 summary(g)
 V(g)$name # vertex
 E(g)  # edges
 
 # Filtering by edge attribute
 # Find out how many Vertices per Edge weight
-for (i in seq_along(1:14)) {
+for (i in seq_along(1:15)) {
   cat(sprintf("Total vertices for %d or more weights: %d\n",i, 
                 length(V(subgraph.edges(g, E(g)[E(g)$weight>=i], del=T)))))
 }
