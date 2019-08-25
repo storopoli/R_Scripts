@@ -123,7 +123,7 @@ scree.plot.APA <- function(data, fa = 'pc', n.iter = 1000, quant = .95) {
   }
 }
 # Load the data
-data <- read_tsv("co-cit.ma2")
+data <- read_tsv("file.ma2")
 data <- data[,1:(length(data)-1)] #removing the last column
 rownames(data) <- colnames(data)
 # Removing KMO
@@ -140,7 +140,7 @@ Column {.sidebar}
 
 ```{r}
 sliderInput("nfactor", label = "Number of Factor/Components",
-            min = 1, max = 10, value = 1, step = 1)
+            min = 1, max = 15, value = 2, step = 1)
 ```
 
 Column {data-width=600}
@@ -150,11 +150,7 @@ Column {data-width=600}
 
 ```{r}
 # PCA
-renderTable(data.frame(
-  unclass(principal(data, nfactors = input$nfactor, scores = T, rotate = "varimax")$loadings),
-  row.names = rownames(principal(data, nfactors = input$nfactor, scores = T, rotate = "varimax")$weights)
-  ),
-  rownames = T, digits = 3)
+renderTable(data.frame(unclass(as.table(printLoadings(principal(data, nfactors = input$nfactor, scores = T, rotate = "varimax")$loadings)))),rownames = T, digits = 3)
 ```
 
 Column {data-width=400}

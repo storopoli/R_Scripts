@@ -6,7 +6,7 @@ df <- read.csv2("coup-min-3-nodes.csv", row.names = 1)
 factor <- read.csv2("node-factor.csv", stringsAsFactors = F)
 
 # Creating a adjacency matrix
-g <- graph_from_adjacency_matrix(as.matrix(df), mode = "undirected")
+gg <- graph_from_adjacency_matrix(as.matrix(data), mode = "undirected", weighted = T, diag = F)
 # Importing from Pajek .net file
 g <- read.graph("~/Desktop/Bib-B-schools-v2/co-cit/co-cit.net", format = "pajek")
 summary(g)
@@ -33,7 +33,7 @@ g <- induced.subgraph(g, which(V(g)$factor!="NA"))
 V(g)$factor #check if it worked
  
 # Vertex more Attributes
-get.graph.attribute(g)
+names(get.vertex.attribute(g))
 V(g)$degree <- degree(g)
 V(g)$betweenness <- betweenness(g)
 V(g)$closeness <- closeness(g)
