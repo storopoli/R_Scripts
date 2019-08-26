@@ -1,6 +1,7 @@
 ################ DATA PREP ################ 
 # Data is mydata
 # Regression model is lm.fit
+# Also take a loot at package olsrr
 
 ################ CORRELATION ################ 
 cor_matrix <- cor(mydata) #correlation matrix
