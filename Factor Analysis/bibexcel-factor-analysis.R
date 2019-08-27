@@ -3,7 +3,6 @@ library(FactorAssumptions)
 library(psych)
 library(ggplot2)
 library(igraph)
-library(nFactors)
 options(scipen = 999)
 
 # Load the data
@@ -26,7 +25,6 @@ sink("removed_kmo.txt")
 factor_analysis$removed
 sink()
 data <- factor_analysis$df
-data <- as.data.frame(data)
 length(factor_analysis$removed)
 
 
