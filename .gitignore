@@ -1,9 +1,6 @@
 
 *.icloud
-*.icloud
 *.pper
 *.icloud
 .Rhistory
-.Rhistory
-.Rhistory
-.Rhistory
+.ipynb_checkpoints/

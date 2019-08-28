@@ -3,6 +3,7 @@ library(FactorAssumptions)
 library(psych)
 library(ggplot2)
 library(igraph)
+library(RColorBrewer)
 options(scipen = 999)
 
 # Load the data
@@ -27,7 +28,6 @@ sink()
 data <- factor_analysis$df
 length(factor_analysis$removed)
 
-
 # removing zero std_dev variables
 sd_zero <- names(data[,sapply(data, function(x) { sd(x) == 0} )])
 sink("removed_sd_zero.txt")
@@ -38,6 +38,10 @@ data <- data[!sapply(data, function(x) { sd(x) == 0} ), !sapply(data, function(x
 # How Many Factors?
 screePlotAPA(data)
 ggsave("scree-plot.png", dpi = 300)
+
+# Bartlett-Sphericity test
+bartlett <- cortest.bartlett(data, n = length(data))$p.value
+kmo_geral <- factor_analysis$results$overall
 
 # PCA
 results <- principal(cor(data), nfactors = 3, scores = T, rotate = "varimax")
@@ -69,6 +73,7 @@ factors <- data.frame(
 write.csv(data, "adjacency_matrix.csv")
 
 # Creating network using igraph
+data <- read.csv("adjacency_matrix.csv", row.names = 1) # if you need to load network
 g <- graph_from_adjacency_matrix(as.matrix(data), mode = "undirected", weighted = T, diag = F)
 summary(g) #check graph
 V(g)$name # check vertex
@@ -81,12 +86,14 @@ V(g)$factor # vertex atrribute
 
 # Vertex more Attributes
 names(get.vertex.attribute(g))
-V(g)$degree <- degree(g)
+V(g)$degree <- degree(g, normalized = T)
 V(g)$betweenness <- betweenness(g)
 V(g)$closeness <- closeness(g)
 V(g)$transitivity <- transitivity(g) # clustering coefficient
 
 # Network Attributes
+# Centralization
+centralize(V(g)$degree, theoretical.max = 0, normalized = TRUE)
 # Centrality
 centr_degree(g)$centralization # degrees of vertices
 centr_eigen(g, directed = F)$centralization #closeness of vertices
@@ -98,18 +105,28 @@ mean(degree(g))/(vcount(g)-1)
 # network.density(asNetwork(igraph::simplify(g)))
 graph.density(igraph::simplify(g),loop=FALSE)
 
+# Plotting Normal Layout
+# Add Vertex Degree
+V(g)$degree <- degree(g)
+rescale = function(x,a,b,c,d){c + (x-a)/(b-a)*(d-c)}
+V(g)$degree <- rescale(degree(g), 20, 60, 1, 5)
+# choose a palette
+pal <- brewer.pal(length(unique(V(g)$factor)), "Dark2")
+# create coloursbased on unique values for vertex attribute
+plot(g, vertex.color = pal[as.numeric(as.factor(vertex_attr(g, "factor")))], edge.width = E(g)$weight*0.10, vertex.size = V(g)$degree, vertex.label.cex = 0.35)
+
 # Exporting to DOT (This is the best to Gephi)
 write_graph(g, "network.dot", format = "dot")
 
 # Getting Network Attributes for each Factor
 sub_df <- data.frame()
 for (i in unique(na.omit(V(g)$factor))){
+  #variance_accounted <- which(results$Vaccounted)
   new_g <- induced.subgraph(g, which(V(g)$factor==as.character(i)))
   centrality_degree <- centr_degree(new_g)$centralization
   centrality_eigen <- centr_eigen(new_g, directed = F)$centralization
   sub_cohesion <- mean(degree(new_g))/(vcount(new_g)-1)
   sub_density <- graph.density(igraph::simplify(new_g),loop=FALSE)
-  
   dat <- data.frame("factor" = as.factor(i),
                     "centrality_degree" = centrality_degree,
                     "centrality_eigen" = centrality_eigen,
@@ -121,8 +138,14 @@ for (i in unique(na.omit(V(g)$factor))){
   cat(sprintf("Cohesion Factor %s: %.3f\n", i, sub_cohesion))
   cat(sprintf("Density Factor %s: %.3f\n", i, sub_density))
 }
+variance_transposed <- as.data.frame(t(results$Vaccounted), stringsAsFactors = F)
+variance_transposed$factor <- rownames(variance_transposed)
+sub_df$variance_accounted <- variance_transposed[match(sub_df$factor, variance_transposed$factor), 2]
+sub_df$kmo_geral <- kmo_geral
+sub_df$bartlett_geral <- bartlett
+
 # Exporting to CSV
-write.csv(sub_df, "sub_networks.csv")
+write.csv(sub_df, "factors_stats.csv")
 
 # LaTeX export
 df2latex(cor(data), short.names = T, apa = T, rowlabels = T,
