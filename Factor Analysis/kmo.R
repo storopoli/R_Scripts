@@ -50,8 +50,6 @@ kmo = function( data ){
 	  message(sprintf("There is still an individual KMO value below 0.5: "), 
 	        rownames(individual)[which.min(apply(individual,MARGIN=1,min))]," - ",
 	        min(individual))
-	} else {
-	  print.data.frame(individual)
 	}
 	return(ans)
 	

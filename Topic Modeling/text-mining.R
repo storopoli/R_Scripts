@@ -46,7 +46,7 @@ dtm_tidy_tf_idf %>%
 # Bigrams
 bigrams <- tidy_text %>%
   unnest_tokens(bigram, term, token = "ngrams", n = 2) %>%
-  filter(!term %in% stop_words)
+  filter(!bigram %in% stop_words)
 # see the top frequent
 bigrams %>%
   count(bigram, sort = TRUE)
