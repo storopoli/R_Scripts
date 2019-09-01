@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+
+
 def bibexceltojson(input_name=None, type=None, encoding='utf8', output_name=None):
     """
     This function will import a BibExcel generated .doc or .txt file
@@ -94,7 +97,7 @@ def filtercoupling(input_matrix=None, input_json=None, type=None, encoding='utf8
         json_data = f.read()
         f.close()
     json_data = json.loads(json_data)
-    result = [json_data[i] for i in var_ids]
+    result = [json_data[i - 1] for i in var_ids]
 
     # Reconstruct the txt or doc file
     string = ''
