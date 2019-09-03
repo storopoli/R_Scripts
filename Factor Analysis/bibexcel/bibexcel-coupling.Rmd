@@ -1,0 +1,318 @@
+---
+title: "Business Schools - Pareamento 1988-2010"
+author:
+- "José Storopoli"
+- "Fernando Serra"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      dev = c('pdf', 'png'),
+                      dpi=200
+                      )
+library(readr)
+library(nFactors)
+library(psych)
+library(ggplot2)
+library(igraph)
+library(RColorBrewer)
+library(flextable)
+library(FactorAssumptions)
+options(scipen = 999)
+```
+
+**Observação**: Caso as tabelas explodam na página do Word, ir em `table > AutoFit to Window` ou `Tabela > AutoAjuste de Janela`.
+
+## Coleta de Dados
+
+Buscamos no Scopus a seguinte expressão de busca: `TI="business school$" AND SU="Business & Economics") AND LANGUAGE: (English) AND DOCUMENT TYPES: (Article OR Review) Indexes=SCI-EXPANDED, SSCI, A&HCI, CPCI-S, CPCI-SSH, ESCI Timespan=1988-2010`
+
+Total coletados pela expressão de busca: 153
+
+Removemos 3 artigos que foram publicados nos seguintes journals:
+  * Harvard Business Review
+  * California Management Review
+  * Sloan Management Review
+  * Business Horizons
+
+Tivemos um total de 150 artigos coletados.
+
+### BibExcel
+
+A matriz de co-ocorrência foi gerada no `BibExcel`. Utilizamos no mínimo `1` citação em comum. Totalizando `113` artigos.
+
+```{r data, message=F, warning=F}
+# Load the data
+data <- read_tsv("coupling-1988-2010.ma2")
+data <- data[,1:(length(data)-1)] #removing the last column
+data <- as.data.frame(data)
+rownames(data) <- colnames(data)
+
+# If you want to do a coupling
+cols_coupling <- c()
+for (name in names(data)) {
+  cols_coupling_individual <- paste0("bc", name)
+  cols_coupling <- c(cols_coupling, cols_coupling_individual)
+}
+colnames(data) <- cols_coupling
+rownames(data) <- colnames(data)
+```
+
+## Remoção de KMO
+
+Dos `113` artigos `79` tiveram quer se removidos pois não possuem KMO individual maior que 0.5 (critério mínimo de aceitação para uma análise fatorial ou de componentes).
+
+Foram removidos de maneira iterativa. Ou seja, removendo a variável com menor KMO e repetindo o procedimento com as restantes até obter uma solução final em que todos os KMOs invididuais estejam com valores acima de 0.5. Abaixo estão listados os removidos ordenados por ordem de remoção.
+
+Amostra após remoção de KMO = `34` documentos
+
+```{r KMO, echo=FALSE, warning=F, message=F}
+#  Removing KMO
+factor_analysis <- kmo_optimal_solution(data, squared = T)
+sink("removed_kmo.txt")
+factor_analysis$removed
+sink()
+data <- factor_analysis$df
+
+# Rendering as FlexTable
+kmo_removed <- flextable(as.data.frame(factor_analysis$removed))
+kmo_removed <- autofit(kmo_removed)
+kmo_removed
+
+# If error try this
+#print(factor_analysis$removed)
+```
+
+## Desvio Padrão Nulo
+
+Também é necessário checar se há variáveis com desvio padrão nulo ($sd = 0$).
+
+Abaixo estão listadas as variáveis.
+
+Total removido `3`, reduzindo a amostra para `31` artigos.
+
+```{r sd-NULL, echo=F, warning=F, message=F}
+#removing zero std_dev variables
+sd_zero <- names(data[,sapply(data, function(x) { sd(x) == 0} )])
+sink("removed_sd_zero.txt")
+sd_zero
+sink()
+data <- data[!sapply(data, function(x) { sd(x) == 0} ), !sapply(data, function(x) { sd(x) == 0} ), drop = FALSE]
+# Rendering as FlexTable
+sd_zero <- flextable(as.data.frame(sd_zero))
+sd_zero <- autofit(sd_zero)
+sd_zero
+```
+
+## Bartlett-Sphericity test e KMO Geral
+
+Se der `NaN` (*Not a Number*) é um erro que geralmente indica que o p-valor do barlett é muito pequeno.
+
+```{r barlett, echo=F, warning=F}
+bartlett <- cortest.bartlett(cor(data), n = length(data))$p.value
+kmo_geral <- factor_analysis$results$overall
+cat("Bartlett:", bartlett, "\n")
+cat("KMO Geral:", kmo_geral, "\n")
+```
+
+## Quantos Fatores?
+
+Essa pergunta é perene em análises fatoriais/componentes. 
+
+You can use the **Parallel Analysis**. The logic underlying this approach is that the magnitude of the eigenvalue for the last retained factor should exceed an eigenvalue obtained from random data under otherwise comparable conditions. In other words, in a real study involving the factor analysis of, say, 20 variables measured on 500 people, the eigenvalue of any retained factor should be greater than the corresponding eigenvalue obtained from randomly generated data arranged to represent 20 variables measured on 500 people. We generally use a representative value (e.g., the 95% percentile).
+
+```{r how-many-factors, echo=F, warnings=F, message=F}
+ev <- eigen(cor(data)) # get eigenvalues
+ap <- nFactors::parallel(subject = nrow(data),var = ncol(data),rep = 1000, quantile = 0.05)
+nS <- nFactors::nScree(x = ev$values, aparallel = ap$eigen$qevpea)
+plotnScree(nS)
+```
+
+## Análise Fatorial/Componentes
+
+Como a análise paralela sugeriu `1` fator. O número de fatores a serem extraídos pela análise fatorial/componentes é `1`.
+
+```{r factor analysis, warning=F}
+results <- principal(cor(data), nfactors = 1, scores = T, rotate = "varimax")
+```
+
+### Variância Explicada
+
+```{r variance_explained, echo=F, message=F, warning=F}
+write.csv2(results$Vaccounted, "variance_accounted.csv")
+Vaccounted <- cbind("stats" = rownames(results$Vaccounted), data.frame(results$Vaccounted, row.names=NULL))
+Vaccounted <- flextable(Vaccounted)
+Vaccounted <- autofit(Vaccounted)
+Vaccounted
+```
+
+## Cargas Fatoriais
+
+```{r loadings, echo=F,warning=F, message=F}
+write.csv2(results$loadings, "loadings_bruto.csv")
+# Export Factor ID for every variable
+# It is important to use absolute values because of negative loadings
+df <- data.frame(unclass(results$loadings), stringsAsFactors = F)
+factors <- data.frame(
+  "ID" = rownames(df),
+  "factor" = apply(df[1:ncol(df)], 1, function(x) colnames(df)[which.max(abs(x))]),
+  stringsAsFactors = F)
+loadings_table <- data.frame(
+  "ID" = rownames(df)
+)
+loadings_table <- cbind(loadings_table,df)
+loadings_table_pretty <- flextable(loadings_table)
+loadings_table_pretty <- autofit(loadings_table_pretty)
+loadings_table_pretty
+```
+
+## Social Networks
+
+Here are some stats of the Network:
+
+```{r adjacency_matrix, include=F}
+# Saving Data
+write.csv(data, "adjacency_matrix.csv")
+```
+```{r igraph_data, echo=F, warning=F, message=F}
+# Creating network using igraph
+data <- read.csv("adjacency_matrix.csv", row.names = 1) # if you need to load network
+g <- graph_from_adjacency_matrix(as.matrix(data), mode = "undirected", weighted = T, diag = F)
+
+# Vertex Atributes
+V(g)$factor <- factors$factor
+V(g)$ID <- factors$ID
+V(g)$degree <- degree(g, normalized = F)
+V(g)$Ndegree <- degree(g, normalized = T)
+V(g)$betweenness <- betweenness(g)
+V(g)$Nbetweenness <- betweenness(g, normalized = T)
+
+# Centralization
+network_centrality <- centr_eigen(g, directed = F)$centralization #closeness of vertices
+# Cohesion
+network_cohesion <- mean(degree(g))/(vcount(g)-1)
+# Density
+# Make sure to always simplify an undirected graph to remove loops and multiple edges 
+# before calculating its density
+# network.density(asNetwork(igraph::simplify(g)))
+network_density <- graph.density(igraph::simplify(g),loop=FALSE)
+
+cat("Network Centrality:", network_centrality, "\n")
+cat("Network Cohesion:", network_cohesion, "\n")
+cat("Network Density:", network_density, "\n")
+```
+
+### Plots
+
+**Observações**:
+  * Tamanho do Node é `Degree`
+  * Cor do Node é fator correspondente da maior carga *absoluta*
+  * Largura da Edge é o `weight` (*frequência da co-ocorrência*)
+
+#### Multidimensional Scaling of Geodesic Distances
+
+This is the default of `UCINET` (*Borgatti, Everett and Freeman (2013), p. 113*)
+
+**Geodesic Distances** are the number of links in the shortest path between a pair of nodes.
+
+```{r plot_network_mds, warning=F, message=F}
+# choose a palette
+pal <- brewer.pal(length(unique(V(g)$factor)), "Dark2")
+# create coloursbased on unique values for vertex attribute
+layout <- layout_with_mds(g, dist = shortest.paths(g))
+layout <- norm_coords(layout, ymin=-1, ymax=1, xmin=-1, xmax=1)
+plot(g,
+     vertex.color = pal[as.numeric(as.factor(vertex_attr(g, "factor")))], 
+     edge.width = E(g)$weight/2,  # change if you need
+     edge.color = "gray80",
+     vertex.size = V(g)$degree/1.5,  # change if you need
+     vertex.label = V(g)$ID,
+     vertex.label.cex = 0.5,  # change if you need
+     vertex.label.family = "Times",
+     rescale = F,
+     layout = layout
+     )
+```
+
+#### Fruchterman-Reingold
+
+```{r plot_network_fr, warning=F, message=F}
+# choose a palette
+pal <- brewer.pal(length(unique(V(g)$factor)), "Dark2")
+# create coloursbased on unique values for vertex attribute
+layout <- layout_with_fr(g)
+layout <- norm_coords(layout, ymin=-1, ymax=1, xmin=-1, xmax=1)
+plot(g,
+     vertex.color = pal[as.numeric(as.factor(vertex_attr(g, "factor")))], 
+     edge.width = E(g)$weight/2,  # change if you need
+     edge.color = "gray80",
+     vertex.size = V(g)$degree/1.5,  # change if you need
+     vertex.label = V(g)$ID,
+     vertex.label.cex = 0.5,  # change if you need
+     vertex.label.family = "Times",
+     rescale = F,
+     layout = layout
+     )
+```
+### Sub-networks
+
+Abaixo estão alguns atributos para cada fator, tomando como base que cada um é uma rede.
+
+```{r sub-network, echo=F, warning=F, message=F}
+sub_df <- data.frame()
+
+for (i in unique(na.omit(V(g)$factor))){
+  #variance_accounted <- which(results$Vaccounted)
+  new_g <- induced.subgraph(g, which(V(g)$factor==as.character(i)))
+  centrality_degree <- centr_degree(new_g)$centralization
+  centrality_eigen <- centr_eigen(new_g, directed = F)$centralization
+  sub_cohesion <- mean(degree(new_g))/(vcount(new_g)-1)
+  sub_density <- graph.density(igraph::simplify(new_g),loop=FALSE)
+  dat <- data.frame("factor" = as.factor(i),
+                    "centrality_degree" = centrality_degree,
+                    "centrality_eigen" = centrality_eigen,
+                    "cohesion" = sub_cohesion,
+                    "density" = sub_density)
+  sub_df <- rbind(sub_df, dat)
+}
+variance_transposed <- as.data.frame(t(results$Vaccounted), stringsAsFactors = F)
+variance_transposed$factor <- rownames(variance_transposed)
+sub_df$variance_accounted <- variance_transposed[match(sub_df$factor, variance_transposed$factor), 2]
+sub_df$kmo_geral <- kmo_geral
+sub_df$bartlett_geral <- bartlett
+sub_networks_table <- flextable(sub_df)
+sub_networks_table <- autofit(sub_networks_table)
+sub_networks_table
+```
+
+### Fatorial com Atributos de Nodes
+
+Abaixo a tabela de fatorial com atributos de Nodes:
+  * **degree**: Degree absoluto
+  * **Ndegree**: Degree normalizado (entre 0 e 1)
+  * **betweenness**: Betweenness absoluto
+  * **Nbetweenness**: Betweenness normalizado (entre 0 e 1)
+  
+```{r loadings_degree, echo=F, warning=F, message=F}
+loadings_table_degree <- data.frame(
+  "degree" = V(g)$degree, 
+  "Ndegree" = V(g)$Ndegree,
+  "betweenness" = V(g)$betweenness,
+  "Nbetweenness" = V(g)$Nbetweenness
+  )
+loadings_table_degree <- cbind(loadings_table, loadings_table_degree)
+loadings_table_degree_pretty <- flextable(loadings_table_degree)
+loadings_table_degree_pretty <- autofit(loadings_table_degree_pretty)
+loadings_table_degree_pretty
+
+```
+
+## Session Info
+Para replicação
+
+```{r}
+sessionInfo()
+```
+
