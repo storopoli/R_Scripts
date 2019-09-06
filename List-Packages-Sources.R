@@ -21,3 +21,4 @@ package_source <- function(pkg){
 }
 
 allmypackages$whereat <- sapply(allmypackages$Package, package_source)
+

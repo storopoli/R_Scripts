@@ -49,6 +49,7 @@ bigrams <- tidy_text %>%
   filter(!bigram %in% stop_words)
 # see the top frequent
 bigrams %>%
+  filter(!is.na(bigram)) %>%
   count(bigram, sort = TRUE)
 # separate bigrams
 bigrams_separated <- bigrams %>%
