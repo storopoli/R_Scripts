@@ -2,7 +2,8 @@
 Couple of handy R Scripts that I use in a daily basis for Scientific Research
 
 ```markdown
-├── Data Text Mining
+.
+├── Data\ Text\ Mining
 │   ├── bibexcel
 │   │   ├── CSVexport.R
 │   │   ├── dataprep.R
@@ -18,56 +19,60 @@ Couple of handy R Scripts that I use in a daily basis for Scientific Research
 │   ├── pdf-text-mining.R
 │   ├── stopwords-pt.txt
 │   └── text-pre-processing.R
-├── Data Wrangling
+├── Data\ Wrangling
 │   ├── Correlations.R
-│   ├── Random Sample Splitting.R
-│   ├── Replace missing with mean.R
+│   ├── Random\ Sample\ Splitting.R
+│   ├── Replace\ missing\ with\ mean.R
 │   ├── dummies.R
 │   ├── importdatasets.R
 │   ├── joindatasets.R
 │   ├── recoding.R
 │   ├── standarizing.R
 │   └── summarizedata.R
-├── Factor Analysis
-│   ├── bibexcel-manipulation
-│   │   ├── BibExcel-filter-coupling.py
-│   │   ├── JSON-to-Excel.py
-│   │   ├── Scopus-BibExcel-JSON.ipynb
-│   │   ├── Scopus-BibExcel-JSON.py
-│   │   ├── WoS-BibExcel-JSON.ipynb
-│   │   ├── WoS-BibExcel-JSON.py
+├── Factor\ Analysis
+│   ├── bibexcel
+│   │   ├── bibexcel-co-cit.Rmd
+│   │   ├── bibexcel-coupling.Rmd
+│   │   ├── bibexcel-factor-analysis.R
+│   │   ├── bibexcel-factor-analysis.Rmd
+│   │   ├── bibexcel.py
 │   │   └── limpeza-bruto.py
 │   ├── Bibliometrix.R
-│   ├── bibexcel-factor-analysis.R
-│   ├── bibexcel-factor-analysis.Rmd
 │   ├── bibliometrix_cocit_matrix.R
 │   ├── communalities_optimal_solution.R
 │   ├── dashboard-factor-analysis.Rmd
-│   ├── export FA loadings.R
-│   ├── factor analysis.R
+│   ├── export\ FA\ loadings.R
+│   ├── factor\ analysis.R
 │   ├── how_many_factors.R
-│   ├── kmo_function.R
+│   ├── kmo.R
 │   ├── kmo_optimal_solution.R
 │   ├── printLoadings.R
 │   ├── scree-plot-APA.R
 │   └── screePlotAPA.R
-├── Network Analysis
+├── Network\ Analysis
 │   ├── network_igraph.R
 │   └── network_network.R
 ├── Plots
-│   ├── APA Theme.R
-│   └── ggplot bivariate.R
+│   ├── APA\ Theme.R
+│   └── ggplot\ bivariate.R
 ├── Regression
-│   ├── Linear Regression Assumptions.R
-│   ├── Plot Regressions.R
-│   ├── ggplot function regression automated.R
-│   ├── ggplot regression.R
-│   └── regression plots Chang.R
+│   ├── Linear\ Regression\ Assumptions.R
+│   ├── Plot\ Estimated\ Effect.R
+│   ├── Plot\ Regressions.R
+│   ├── ggplot\ function\ regression\ automated.R
+│   ├── ggplot\ regression.R
+│   └── regression\ plots\ Chang.R
+├── Topic\ Modeling
+│   ├── rainette.R
+│   ├── stm.R
+│   ├── stopwords-pt.txt
+│   └── text-mining.R
 ├── Bootstrapping.R
 ├── List-Packages-Sources.R
 ├── README.md
 ├── Rd2roxygen.R
 ├── Stargazer.R
+├── apa.csl
 └── polynomials.R
 ```
 
