@@ -17,9 +17,10 @@ library(nFactors)
 library(psych)
 library(ggplot2)
 library(igraph)
-library(RColorBrewer)
 library(flextable)
 library(FactorAssumptions)
+library(ggraph)
+library(tidygraph)
 options(scipen = 999)
 ```
 
@@ -218,55 +219,20 @@ cat("Network Density:", network_density, "\n")
 ### Plots
 
 **Observações**:
-  * Tamanho do Node é `Degree`
+
+  * Tamanho do Node é `NDegree`
   * Cor do Node é fator correspondente da maior carga *absoluta*
   * Largura da Edge é o `weight` (*frequência da co-ocorrência*)
+  * Layout é `Fruchterman-Reingold`
 
-#### Multidimensional Scaling of Geodesic Distances
-
-This is the default of `UCINET` (*Borgatti, Everett and Freeman (2013), p. 113*)
-
-**Geodesic Distances** are the number of links in the shortest path between a pair of nodes.
-
-```{r plot_network_mds, warning=F, message=F}
-# choose a palette
-pal <- brewer.pal(length(unique(V(g)$factor)), "Dark2")
-# create coloursbased on unique values for vertex attribute
-layout <- layout_with_mds(g, dist = shortest.paths(g))
-layout <- norm_coords(layout, ymin=-1, ymax=1, xmin=-1, xmax=1)
-plot(g,
-     vertex.color = pal[as.numeric(as.factor(vertex_attr(g, "factor")))], 
-     edge.width = E(g)$weight/2,  # change if you need
-     edge.color = "gray80",
-     vertex.size = V(g)$degree/1.5,  # change if you need
-     vertex.label = V(g)$ID,
-     vertex.label.cex = 0.5,  # change if you need
-     vertex.label.family = "Times",
-     rescale = F,
-     layout = layout
-     )
-```
-
-#### Fruchterman-Reingold
 
 ```{r plot_network_fr, warning=F, message=F}
-# choose a palette
-pal <- brewer.pal(length(unique(V(g)$factor)), "Dark2")
-# create coloursbased on unique values for vertex attribute
-layout <- layout_with_fr(g)
-layout <- norm_coords(layout, ymin=-1, ymax=1, xmin=-1, xmax=1)
-plot(g,
-     vertex.color = pal[as.numeric(as.factor(vertex_attr(g, "factor")))], 
-     edge.width = E(g)$weight/2,  # change if you need
-     edge.color = "gray80",
-     vertex.size = V(g)$degree/1.5,  # change if you need
-     vertex.label = V(g)$ID,
-     vertex.label.cex = 0.5,  # change if you need
-     vertex.label.family = "Times",
-     rescale = F,
-     layout = layout
-     )
+ggraph(g, layout = 'fr') + 
+  geom_edge_link() + 
+  geom_node_point(aes(size = centrality_degree(normalized = T), colour = factor)) +
+  geom_node_text(aes(label = ID, size = 2), repel = T, size = 1)
 ```
+
 ### Sub-networks
 
 Abaixo estão alguns atributos para cada fator, tomando como base que cada um é uma rede.
@@ -298,7 +264,7 @@ sub_networks_table <- autofit(sub_networks_table)
 sub_networks_table
 ```
 
-### Fatorial com Atributos de Nodes
+## Fatorial com Atributos de Nodes
 
 Abaixo a tabela de fatorial com atributos de Nodes:
   * **degree**: Degree absoluto
