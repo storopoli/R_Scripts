@@ -8,15 +8,15 @@ stargazer(as.data.frame(Base_195[myvars]), type="html", out = "sum.html", summar
           align = T)
 
 #Regression Model####
-stargazer(lm.fitcontrole,lm.fit, title="Resultados da Regressão", 
+stargazer(lm.fitcontrole,lm.fit, title="Resultados da Regress?o", 
           align=TRUE, type = "html", out = "reg.html",
           dep.var.labels   = "Nota RUF",
           covariate.labels = c("Docentes Mestres", "Docentes Especialistas",
                                "Docentes Tempo Parcial", "Docentes Horistas",
-                               "Alunos", "Tradição", "Vocação de Pesquisa",
+                               "Alunos", "Tradi??o", "Voca??o de Pesquisa",
                                "Cursos de Stricto", "Cursos EAD", "Receita",
-                               "Pública", "Capital", "Medicina", "Região CO", "Região N",
-                               "Região NE", "Região S", "Região SE", "Constante"),
+                               "P?blica", "Capital", "Medicina", "Regi?o CO", "Regi?o N",
+                               "Regi?o NE", "Regi?o S", "Regi?o SE", "Constante"),
           column.labels = c("Modelo 1", "Modelo 2"), model.names = F, initial.zero = F,
           coef = list(lmfitbetacontrole$standardized.coefficients, lmfitbeta$standardized.coefficients),
           report = "vc*"
@@ -48,6 +48,7 @@ corstars <-function(x, method=c("pearson", "spearman"), removeTriangle=c("upper"
                     result=c("none", "html", "latex")){
   #Compute correlation matrix
   require(Hmisc)
+  require(xtable)
   x <- as.matrix(x)
   correlation_matrix<-rcorr(x, type=method[1])
   R <- correlation_matrix$r # Matrix of correlation coeficients

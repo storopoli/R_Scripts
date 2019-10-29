@@ -61,7 +61,7 @@ plot(lm.fit)
 #This is how you can check the assumption of equal variance (homoscedasticity) 
 #It's good if you see a horizontal line with equally (randomly) spread points
 car::ncvTest(lm.fit) #non-constant error variance test #Breusch-Pagan Test
-leveneTest(lm.fit) #Levene Test
+car::leveneTest(lm.fit) #Levene Test
 #pvalue must be over 0.05 for homoscedasticity
 par(mfrow = c(1, 1))
 car::spreadLevelPlot(lm.fit) #plot studentized residuals vs. fitted values
