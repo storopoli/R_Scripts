@@ -204,7 +204,7 @@ V(g)$Nbetweenness <- betweenness(g, normalized = T)
 # Centralization
 network_centrality <- centr_eigen(g, directed = F)$centralization #closeness of vertices
 # Cohesion
-network_cohesion <- mean(degree(g))/(vcount(g)-1)
+network_cohesion <- cohesion(g)
 # Density
 # Make sure to always simplify an undirected graph to remove loops and multiple edges 
 # before calculating its density
