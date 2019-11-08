@@ -130,13 +130,17 @@ Essa pergunta é perene em análises fatoriais/componentes.
 You can use the **Parallel Analysis**. The logic underlying this approach is that the magnitude of the eigenvalue for the last retained factor should exceed an eigenvalue obtained from random data under otherwise comparable conditions. In other words, in a real study involving the factor analysis of, say, 20 variables measured on 500 people, the eigenvalue of any retained factor should be greater than the corresponding eigenvalue obtained from randomly generated data arranged to represent 20 variables measured on 500 people. We generally use a representative value (e.g., the 95% percentile).
 
 Abaixo estão listadas as soluções ideias para o número de fatores/componentes conforme:
+
   * **Kaiser Rule**: Eigenvalues maiores que 1
   $n_{Kaiser} = ∑_{i} (λ_{i} ≥ \bar{λ}).$
   Nota que se usar uma matriz de correlação (nosso caso) $\bar{λ}$ é 1.
+  
   * **Parallel Analysis**: Usando o percentil 95%
   $n_{parallel} = ∑_{i} (λ_{i} ≥ LS_i).$
+  
   * **Acceleration factor**: Indica o *cotovelo* do Scree Plot. Corresponde à aceleração da curva (segunda derivada)
   $n_{AF} \equiv \ If \ ≤ft[ (λ_{i} ≥ LS_i) \ and \ max(AF_i) \right]$
+  
   * **Optimal Coordinates**: As *coordenadas otimizadas* são extrapoladas de um valor prévio de Eigenvalue que permite que o eigenvalues observado tenha um valor além dessa extrapilação. A extrapolação é feita por uma regressão linear usando a coordenada do último eigenvalue e a coordenada do eigenalue $k+1$. No total há $k-2$ linhas de regressão como essas.
   $n_{OC} = ∑_i ≤ft[(λ_i ≥ LS_i) \cap (λ_i ≥ (λ_{i \ predicted}) \right].$
 
