@@ -100,3 +100,6 @@ varimax <- varimax(prc$rotation[,1:9], normalize = TRUE)  #number of factors to 
 results_rotated <-  as.data.frame(unclass(varimax$loadings)) #Rotated Matrix
 results_unrotated <-  as.data.frame(unclass(prc$rotation)) #Unrotated Matrix
 
+# Sorting Loadings
+sorted <- fa.sort(fit)
+write.csv2(sorted$loadings, "sorte_loadings.csv")
