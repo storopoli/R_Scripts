@@ -297,6 +297,24 @@ loadings_table_degree_pretty
 
 ```
 
+## Export to Gephi
+
+* Node List com fatores
+* Adjacency Matrix com as co-ocorrências
+* DOT file (This is the best for Gephi)
+
+```{r}
+# Adjacency Matrix
+write.csv(data, "adjacency_matrix.csv")
+
+# Node list
+node_list <- data.frame(Node = V(g)$name, Factor = V(g)$factor)
+write.csv(node_list, "node_list_factor.csv")
+
+# Network.dot
+write_graph(g, "network.dot", format = "dot")
+```
+
 ## Session Info
 Para replicação
 
