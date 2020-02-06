@@ -1,9 +1,8 @@
 library(readr)
-library(FactorAssumptions)
+library(paran)
 library(psych)
-library(ggplot2)
 library(igraph)
-library(RColorBrewer)
+library(FactorAssumptions)
 options(scipen = 999)
 
 # Load the data
@@ -36,8 +35,11 @@ sink()
 data <- data[!sapply(data, function(x) { sd(x) == 0} ), !sapply(data, function(x) { sd(x) == 0} ), drop = FALSE]
 
 # How Many Factors?
-screePlotAPA(data)
-ggsave("scree-plot.png", dpi = 300)
+# adjusted is for the sample error-induced inflation
+png("scree-plot.png", width = 14, height = 7, units = "in", res = 300,
+    type = "cairo-png", bg = "transparent")
+paran(data, iterations = 10000, centile = 95, graph = T)
+dev.off()
 
 # Bartlett-Sphericity test
 bartlett <- cortest.bartlett(data, n = length(data))$p.value
@@ -46,10 +48,6 @@ kmo_geral <- factor_analysis$results$overall
 # PCA
 results <- principal(cor(data), nfactors = 3, scores = T, rotate = "varimax")
 results$Vaccounted
-# numero de fatores
-for (factor in colnames(results$Vaccounted)) {
-  print(factor)
-}
 write.csv2(results$Vaccounted, "variance_accounted.csv")
 write.csv2(results$loadings, "loadings_bruto.csv")
 loadings <- as.table(printLoadings(results$loadings))
@@ -74,22 +72,21 @@ write.csv(data, "adjacency_matrix.csv")
 
 # Creating network using igraph
 data <- read.csv("adjacency_matrix.csv", row.names = 1) # if you need to load network
-g <- graph_from_adjacency_matrix(as.matrix(data), mode = "undirected", weighted = T, diag = F)
+g <- graph_from_adjacency_matrix(as.matrix(data), mode = "undirected",
+                                 weighted = T, diag = F)
 summary(g) #check graph
 V(g)$name # check vertex
-E(g)
 
-# Adding node (vertex) attributes
-g <- set_vertex_attr(g, "factor", index = factors$ID, value = factors$factor)
-names(get.vertex.attribute(g))
-V(g)$factor # vertex atrribute
-
-# Vertex more Attributes
-names(get.vertex.attribute(g))
-V(g)$degree <- degree(g, normalized = T)
+# Vertex Atributes
+V(g)$factor <- factors$factor
+V(g)$ID <- factors$ID
+V(g)$degree <- degree(g, normalized = F)
+V(g)$Ndegree <- degree(g, normalized = T)
 V(g)$betweenness <- betweenness(g)
-V(g)$closeness <- closeness(g)
+V(g)$Nbetweenness <- betweenness(g, normalized = T)
 V(g)$transitivity <- transitivity(g) # clustering coefficient
+V(g)$closeness <- closeness(g)
+names(get.vertex.attribute(g))
 
 # Network Attributes
 # Centralization
@@ -98,7 +95,7 @@ centralize(V(g)$degree, theoretical.max = 0, normalized = TRUE)
 centr_degree(g)$centralization # degrees of vertices
 centr_eigen(g, directed = F)$centralization #closeness of vertices
 # Cohesion
-mean(degree(g))/(vcount(g)-1)
+cohesion(g)
 # Density
 # Make sure to always simplify an undirected graph to remove loops and multiple edges 
 # before calculating its density
