@@ -54,11 +54,6 @@ loadings <- as.table(printLoadings(results$loadings))
 write.csv2(loadings, "loadings.csv")
 fa.diagram(results, digits = 3, cut = 0.4, sort = T)
 
-# Export Tables and Loadings
-df <- data.frame(unclass(loadings)) # this one is better
-#df <- data.frame(unclass(results$loadings),communalities = results$communalities, uniqueness = results$uniqueness,complexity = results$complexity)
-#round(df,2)
-
 # Export Factor ID for every variable
 # It is important to use absolute values because of negative loadings
 df <- data.frame(unclass(results$loadings), stringsAsFactors = F)
@@ -77,7 +72,7 @@ g <- graph_from_adjacency_matrix(as.matrix(data), mode = "undirected",
 summary(g) #check graph
 V(g)$name # check vertex
 
-# Vertex Atributes
+# Vertex Attributes
 V(g)$factor <- factors$factor
 V(g)$ID <- factors$ID
 V(g)$degree <- degree(g, normalized = F)

@@ -14,7 +14,7 @@ M$CR<- stringr::str_replace_all(as.character(M$CR),"DOI;","DOI ")
 
 # Cocitation
 cocit <- biblioNetwork(M, analysis = "co-citation",
-                          network = "references", sep = ";")
+                          network = "references", sep = ";", shortlabel = T)
 cocit <- cocit[nchar(colnames(cocit)) != 0,
                      nchar(colnames(cocit)) != 0]
 dim(cocit)
