@@ -8,7 +8,8 @@ stargazer(as.data.frame(Base_195[myvars]), type="html", out = "sum.html", summar
           align = T)
 
 #Regression Model####
-stargazer(lm.fitcontrole,lm.fit, title="Resultados da Regress?o", 
+
+stargazer(lm.fitcontrole, lm.fit, title="Resultados da Regress?o", 
           align=TRUE, type = "html", out = "reg.html",
           dep.var.labels   = "Nota RUF",
           covariate.labels = c("Docentes Mestres", "Docentes Especialistas",
@@ -19,7 +20,7 @@ stargazer(lm.fitcontrole,lm.fit, title="Resultados da Regress?o",
                                "Regi?o NE", "Regi?o S", "Regi?o SE", "Constante"),
           column.labels = c("Modelo 1", "Modelo 2"), model.names = F, initial.zero = F,
           coef = list(lmfitbetacontrole$standardized.coefficients, lmfitbeta$standardized.coefficients),
-          report = "vc*"
+          report = "vc*", apply.coef = exp  # log odds
 )
 
 #Correlation Matrix####
