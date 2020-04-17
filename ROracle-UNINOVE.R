@@ -13,9 +13,9 @@ sql_subquery.OraConnection <- dbplyr:::sql_subquery.Oracle
 
 # Connection Details ------------------------------------------------------
 drv <- dbDriver("Oracle")
-host <- '10.113.0.227'
-port <- 1536
-sid <- 'DB1'  # dev
+host <- '10.113.1.225'
+port <- 1522
+sid <- 'DB'  # prod
 user <- 'josees'
 pass <- Sys.getenv("UNINOVE_PASS")
 
