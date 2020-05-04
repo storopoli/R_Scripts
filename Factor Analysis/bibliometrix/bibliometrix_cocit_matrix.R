@@ -2,11 +2,13 @@ library(bibliometrix)
 library(dplyr)
 library(nFactors)
 library(psych)
-library(openxlsx)
 library(Matrix)
 library(igraph)
+library(tidygraph)
+library(ggraph)
 library(network)
 library(intergraph)
+library(openxlsx)
 set.seed(123)
 
 M <- readRDS("data/all_records.rds")
@@ -83,7 +85,7 @@ diag(cocit) <- 0
 assertthat::are_equal(colnames(cocit), rownames(cocit))
 
 # Export CSV
-write.csv(as.matrix(cocit), "tables/cocit_matrix.csv")
+write.csv2(as.matrix(cocit), "tables/cocit_matrix.csv")
 
 
 # PCA ---------------------------------------------------------------------
@@ -96,7 +98,7 @@ ap <- parallel(subject = nrow(cocit),
                rep = 10000,
                quantile = 0.05)
 nS <- nScree(x = ev$values, aparallel = ap$eigen$qevpea)
-png("images/co_cit_scree-plot.png", width = 14, height = 7, units = "in", res = 300,
+png("images/cocit_scree-plot.png", width = 14, height = 7, units = "in", res = 300,
     type = "cairo-png", bg = "transparent")
 plotnScree(nS)
 dev.off()
@@ -106,8 +108,8 @@ pca_cocit <- principal(cor(cocit), nfactors = 3, scores = T,
                        rotate = "varimax")
 print(pca_cocit, digits = 2, cut = 0.4)
 # Export PCA to CSV
-write.csv(pca_cocit$loadings, "tables/pca_co_cit.csv")
-write.csv(pca_cocit$Vaccounted, "tables/variance_accounted_co_cit.csv")
+write.csv2(pca_cocit$loadings, "tables/pca_cocit.csv")
+write.csv2(pca_cocit$Vaccounted, "tables/variance_accounted_cocit.csv")
 
 
 # Network Analysis --------------------------------------------------------
@@ -123,28 +125,23 @@ factors <- data.frame(
 
 
 # Creating network using igraph
-cocit <- read.csv("tables/cocit_matrix.csv", row.names = 1) # if you need to load network
+cocit <- read.csv2("tables/cocit_matrix.csv", row.names = 1) # if you need to load network
 g <- graph_from_adjacency_matrix(as.matrix(cocit), mode = "undirected",
                                  weighted = T, diag = F)
 summary(g) #check graph
 V(g)$name # check vertex
 
-# Imputting the max absolute value loading as the factor for each Node
-factors$factor <- apply(factors[1:ncol(factors)], 1, function(x) colnames(factors)[which.max(abs(x))])
-
 # Vertex Attributes
-V(g)$name <- substr(rownames(factors), start=3, stop = 6)
 V(g)$ID <- rownames(factors)
-g <- set_vertex_attr(g, "factor", index = rownames(factors), value = factors$factor)
+V(g)$factor <- factors$factor
 V(g)$degree <- degree(g, normalized = F)
 V(g)$Ndegree <- degree(g, normalized = T)
 V(g)$betweeness <- betweenness(g, directed = F)
 V(g)$Nbetweeness <- betweenness(g, directed = F, normalized = T)
 V(g)$transitivity <- transitivity(g) # clustering coefficient
 V(g)$closeness <- closeness(g)
-names(get.vertex.attribute(g))
 
-write.csv(as.data.frame(vertex_attr(g)), "tables/cocit_vertex_attributes.csv")
+write.csv2(as.data.frame(vertex_attr(g)), "tables/cocit_vertex_attributes.csv")
 
 # Subnetworks
 sub_df <- data.frame()
@@ -175,3 +172,51 @@ write.csv2(sub_df, "tables/cocit_subnetwork_stats.csv")
 
 # Exporting to DOT (This is the best to Gephi)
 write_graph(g, "data/cocit_network.dot", format = "dot")
+
+
+# Plot Network ------------------------------------------------------------
+
+# Weighted Distance
+dist <- distances(g, algorithm = "dijkstra")
+
+# Plot MDS
+as_tbl_graph(g) %>% 
+  ggraph(layout = "mds", dist = dist) +
+  geom_edge_link(aes(alpha = stat(index)),show.legend = F, check_overlap = T) +
+  geom_node_point(aes(size = degree, shape = as.factor(factor))) +
+  geom_node_label(aes(label = ID, size = 8), repel = T, show.legend = F, label.size = 0.1, ) +
+  theme_graph() +
+  theme(legend.position = "bottom") + 
+  scale_shape_manual(name = "factor", 
+                     labels = c("RC1" = "1", "RC2" = "2", "RC3" = "3", "RC4" = "4"),
+                     values = c(0, 1, 2, 3))
+ggsave("images/cocit_ggraph_mds.png", dpi = 300, 
+       width = 20, height = 14, limitsize = F)
+
+# Plot KK
+as_tbl_graph(g) %>% 
+  ggraph(layout = "kk") +
+  geom_edge_link(aes(alpha = stat(index)),show.legend = F, check_overlap = T) +
+  geom_node_point(aes(size = degree, shape = as.factor(factor))) +
+  geom_node_label(aes(label = ID, size = 8), repel = T, show.legend = F, label.size = 0.1, ) +
+  theme_graph() +
+  theme(legend.position = "bottom") + 
+  scale_shape_manual(name = "factor", 
+                     labels = c("RC1" = "1", "RC2" = "2", "RC3" = "3", "RC4" = "4"),
+                     values = c(0, 1, 2, 3))
+ggsave("images/cocit_ggraph_kk.png", dpi = 300, 
+       width = 20, height = 14, limitsize = F)
+
+# Plot FR
+as_tbl_graph(g) %>% 
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(alpha = stat(index)),show.legend = F, check_overlap = T) +
+  geom_node_point(aes(size = degree, shape = as.factor(factor))) +
+  geom_node_label(aes(label = ID, size = 8), repel = T, show.legend = F, label.size = 0.1, ) +
+  theme_graph() +
+  theme(legend.position = "bottom") + 
+  scale_shape_manual(name = "factor", 
+                     labels = c("RC1" = "1", "RC2" = "2", "RC3" = "3", "RC4" = "4"),
+                     values = c(0, 1, 2, 3))
+ggsave("images/cocit_ggraph_fr.png", dpi = 300, 
+       width = 20, height = 14, limitsize = F)
