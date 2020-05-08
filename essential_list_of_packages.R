@@ -107,7 +107,7 @@ install.packages(c("tm","tau","koRpus","lexicon","sylly","textir",
                    "corpustools","udpipe","textstem", "tidytext","text2vec"), 
                  dependencies = TRUE)
 # Bayesian Analysis
-install.packages(c("rstan","rstanarm"), dependencies = TRUE)
+install.packages(c("rstan","rstanarm","brms"), dependencies = TRUE)
 
 # Machine Learning --------------------------------------------------------
 
@@ -226,4 +226,4 @@ install.packages(c("Hmisc","foreign","protr","readxl","xlsx",
                    "d3heatmap","dashboard","highcharter","rbokeh","rvest",
                    "Rcrawler","ralger","scrapeR","devtools","usethis",
                    "roxygen2","knitr","rmarkdown","flexdashboard","Shiny",
-                   "xtable","httr","profvis","rstan","rstanarm"), dependencies = TRUE)
+                   "xtable","httr","profvis","rstan","rstanarm","bmrs"), dependencies = TRUE)
