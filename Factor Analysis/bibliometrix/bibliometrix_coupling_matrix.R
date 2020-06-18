@@ -102,7 +102,7 @@ for (i in unique(na.omit(V(g)$factor))){
   total_ties_between_factors <-  sum(ties_between_group$matrix[which(rownames(ties_between_group$matrix) %in% as.character(i)),
                                                                -which(colnames(ties_between_group$matrix) %in% as.character(i))])
   possible_ties_between_factors <- size * (total_size - size)
-  cohesion_manual <- sub_density * total_ties_between_factors / possible_ties_between_factors
+  cohesion_manual <- total_ties_between_factors / possible_ties_between_factors
   dat <- data.frame("factor" = as.factor(i),
                     "size"= size,
                     "centralization_degree" = centralization_degree,
