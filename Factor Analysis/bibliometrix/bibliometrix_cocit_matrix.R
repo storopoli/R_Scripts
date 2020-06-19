@@ -136,9 +136,9 @@ V(g)$ID <- rownames(factors)
 V(g)$factor <- factors$factor
 V(g)$degree <- degree(g, normalized = F)
 V(g)$Ndegree <- degree(g, normalized = T)
+V(g)$eigen_centrality <- eigen_centrality(g, directed = F)
 V(g)$betweeness <- betweenness(g, directed = F)
 V(g)$Nbetweeness <- betweenness(g, directed = F, normalized = T)
-V(g)$transitivity <- transitivity(g) # clustering coefficient
 V(g)$closeness <- closeness(g)
 
 write.csv2(as.data.frame(vertex_attr(g)), "tables/cocit_vertex_attributes.csv")
@@ -157,15 +157,17 @@ for (i in unique(na.omit(V(g)$factor))){
                                                                -which(colnames(ties_between_group$matrix) %in% as.character(i))])
   possible_ties_between_factors <- size * (total_size - size)
   cohesion_manual <- total_ties_between_factors / possible_ties_between_factors
+  transitivity <- transitivity(new_g) # clustering coefficient
   dat <- data.frame("factor" = as.factor(i),
+                    "total_size_network" = total_size,
                     "size"= size,
                     "centralization_degree" = centralization_degree,
-                    "density" = sub_density,
                     "cohesion" = sub_cohesion_igraph,
-                    "total_size_network" = total_size,
                     "total_ties_between_factors" = total_ties_between_factors,
                     "possible_ties_between_factors" = possible_ties_between_factors,
-                    "cohesion_manual" = cohesion_manual)
+                    "cohesion_manual" = cohesion_manual,
+                    "density" = sub_density,
+                    "transitivity" = transitivity)
   sub_df <- rbind(sub_df, dat)
 }
 write.csv2(sub_df, "tables/cocit_subnetwork_stats.csv")
