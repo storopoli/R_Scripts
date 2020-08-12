@@ -1,6 +1,7 @@
 
 *.icloud
 *.pper
-*.icloud
 .Rhistory
 .ipynb_checkpoints/
+.DS_Store
+
