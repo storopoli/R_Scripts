@@ -35,7 +35,7 @@ dtm_tidy_tf_idf %>%
   arrange(desc(tf_idf)) %>%
   mutate(term = factor(term, levels = rev(unique(term)))) %>% 
   #group_by(document) %>% 
-  top_n(15) %>% 
+  slice_head(n = 15) %>% 
   ungroup() %>%
   ggplot(aes(term, tf_idf)) + #, fill = document)) +
   geom_col(show.legend = FALSE) +
@@ -68,7 +68,7 @@ bigram_tf_idf %>%
   arrange(desc(tf_idf)) %>%
   mutate(bigram = factor(bigram, levels = rev(unique(bigram)))) %>% 
   #group_by(document) %>% 
-  top_n(20) %>% 
+  slice_head(n = 20) %>% 
   ungroup() %>%
   ggplot(aes(bigram, tf_idf)) + #, fill = document)) +
   geom_col(show.legend = FALSE) +
@@ -78,6 +78,7 @@ bigram_tf_idf %>%
 
 # Network of Bigrams
 bigram_graph <- bigram_counts %>%
+  filter(!is.na(word1)) %>%
   filter(n > 20) %>%
   graph_from_data_frame()
 # plot undirected
@@ -108,7 +109,7 @@ word_cors <- words %>%
 word_cors %>%
   filter(item1 %in% c("retent", "student", "improv", "campus")) %>%
   group_by(item1) %>%
-  top_n(6) %>%
+  slice_head(n = 6) %>%
   ungroup() %>%
   mutate(item2 = reorder(item2, correlation)) %>%
   ggplot(aes(item2, correlation)) +

@@ -26,6 +26,7 @@ bruto_word %>%
 #Gráfico de Bigram
 bruto_bigram_graph <- bruto_bigrams %>%
   filter(n > 1) %>% #filtrar frequencia mínima
+  #filter(!is.na(XXXX)) %>%
   graph_from_data_frame()
 bruto_bigram_graph
 set.seed(2017)

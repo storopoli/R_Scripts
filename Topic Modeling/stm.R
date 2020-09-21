@@ -35,7 +35,7 @@ plot(mod.out.corr)
 td_beta <- tidy(topic_model)
 td_beta %>%
   group_by(topic) %>%
-  top_n(10, beta) %>%
+  slice_max(beta, n = 10) %>%
   ungroup() %>%
   mutate(topic = paste0("Topic ", topic),
          term = reorder_within(term, beta, topic)) %>%
