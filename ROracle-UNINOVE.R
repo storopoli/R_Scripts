@@ -32,4 +32,4 @@ con <- dbConnect(drv, username = user,
 
 rs <- dbSendQuery(con, "SELECT * FROM SEU.SEUAAB")
 data <- fetch(rs)
-data <- as.tbl(data)
+data <- as_tibble(data)
