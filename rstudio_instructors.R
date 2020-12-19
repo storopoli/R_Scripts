@@ -1,6 +1,7 @@
 library(tidyverse)
 library(furrr)
 library(rvest)
+plan(multisession)
 
 get_data <- function(link) {
   link <- read_html(link)
