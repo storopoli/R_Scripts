@@ -16,17 +16,19 @@ model_rstan <- stan("stanmodel.stan",
                     data = dat)
 summary(model_rstan)$summary
 
-model_rstanarm <- stan_glmer(hwy ~ (1 | class) + displ + year,
+model_rstanarm <- stan_glmer(hwy ~ 1 + (1 | class) + displ + year,
                              data = mpg,
                              family = gaussian)
 summary(model_rstanarm)
 
-model_brms <- brm(hwy ~ (1 | class) + displ + year,
+model_brms <- brm(hwy ~ 1 + (1 | class) + displ + year,
                   data = mpg,
                   family = gaussian,
                   save_pars = save_pars(all = TRUE))
 stancode(model_brms)
 summary(model_brms, priors = TRUE)
+prior_summary(model_brms)
+ranef(model_brms, robust = TRUE)
 
 
 

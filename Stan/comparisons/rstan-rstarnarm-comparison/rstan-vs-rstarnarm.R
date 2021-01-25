@@ -7,7 +7,7 @@ library(microbenchmark)
 
 # Compile Models
 
-model <- stan_model("san.stan")
+model <- stan_model("stan.stan")
 model_std <- stan_model("stan_std.stan")
 model_qr <- stan_model("stan_qr.stan")
 
