@@ -11,11 +11,11 @@ dat <- list(
   K = 2,
   id = as.numeric(as.factor(mpg$class)),
   X = cbind(mpg$displ, mpg$year),
-  y = mpg$hwy
+  y = mpg$hwyo
 )
 
 # Vanilla Hierarchical Model
-# 10.8s Total
+# 11.7s Total
 vanilla <- cmdstan_model("hierarchical.stan")
 vanilla_fit <- vanilla$sample(data = dat)
 vanilla_fit$summary()

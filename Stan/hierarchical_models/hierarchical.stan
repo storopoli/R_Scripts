@@ -7,17 +7,19 @@ data {
   vector[N] y; //the response variable
 }
 parameters {
-  real alpha; // population-level intercept
+  real alpha; //population-level intercept
   vector[K] beta; //population-level regression coefficients
   vector[J] varying_alpha; //group-level regression intercepts
-  real<lower=0> sigma; //residual error
+  real<lower=0> sigma; //model residual error
+  real<lower=0> sigma_alpha; //standard error for the group-level regression intercepts
 }
 model {
   //priors
-  alpha ~ normal(mean(y), 2.5 * sd(y)); // prior population-level intercept
-  beta ~ student_t(3,0,1); //weakly informative priors on the regression coefficients
-  varying_alpha ~ normal(0, 10); //weakly informative prior on the group-level intercepts
-  sigma ~ exponential(1/sd(y)); //weakly informative priors
+  alpha ~ normal(mean(y), 2.5 * sd(y));
+  beta ~ student_t(3,0,1);
+  varying_alpha ~ normal(0, sigma_alpha);
+  sigma ~ exponential(1/sd(y));
+  sigma_alpha ~ exponential(0.1);
   
   //likelihood
   y ~ normal(alpha + varying_alpha[id] + X * beta, sigma);
