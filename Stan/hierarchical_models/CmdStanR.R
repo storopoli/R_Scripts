@@ -11,7 +11,7 @@ dat <- list(
   K = 2,
   id = as.numeric(as.factor(mpg$class)),
   X = cbind(mpg$displ, mpg$year),
-  y = mpg$hwyo
+  y = mpg$hwy
 )
 
 # Vanilla Hierarchical Model
