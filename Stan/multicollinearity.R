@@ -32,7 +32,7 @@ summary(bmodel4)
 loo_b1 <- loo(bmodel1)
 loo_b2 <- loo(bmodel2)
 loo_b3 <- loo(bmodel3)
-loo_b4 <- loo::loo(bmodel4)
+loo_b4 <- rstanarm::loo(bmodel4)
 
 
 loo_compare(
@@ -72,3 +72,11 @@ round(colMeans(as.matrix(proj)), 1)
 
 
 mcmc_areas(as.matrix(proj))
+vars_cv <- fit_cv$solution_terms[1:2]
+
+bmodel5 <- update(bmodel3, formula. = ~  cyl + wt)
+loo_b5 <- loo(bmodel5)
+loo_compare(
+    loo_b3,
+    loo_b5
+)
