@@ -44,6 +44,13 @@ fit_serial <- brm(
   backend = "cmdstanr"
 )
 
+# 17.1s
+fit_unnormalized  <- update(
+  fit_serial,
+  normalize = FALSE,
+  backend = "cmdstanr"
+)
+
 # reduce_sum only work as sudo
 # 18.2s
 fit_parallel <- update(
