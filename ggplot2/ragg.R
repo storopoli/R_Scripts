@@ -17,7 +17,7 @@ logo <- "twitter"
 ggplot() +
   geom_text(
     aes(x = 0, y = 2, label = code),
-    family = "Fira Code"
+    family = "Cascadia Code PL"
   ) +
   geom_text(
     aes(x = 0, y = 1, label = logo),
