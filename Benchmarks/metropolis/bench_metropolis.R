@@ -13,7 +13,7 @@ width <- 2.75
 # Stan is 3.6ms
 # Rcpp is 20ms
 # R is 1.35s
-# Julia is 2ms
+# Julia is 6.3ms
 # Julia is RELATIVE than R and RELATIVE than Stan
 bench::mark(
   metropolis(n_sim, width, rho = rho),
