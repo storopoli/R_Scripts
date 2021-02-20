@@ -2,7 +2,7 @@ library(cmdstanr)
 data(mtcars)
 
 mtcars$Intercep <- 1
-dat  <- list(
+dat <- list(
     N = 32,
     Y = mtcars$mpg,
     K = 11,
@@ -10,6 +10,15 @@ dat  <- list(
     prior_only = FALSE
 )
 
-# 0.4s sampling (Turing 2.4s)
-model <- cmdstan_model(here::here("Stan", "comparisons", "cmdstanr-vs-turing.jl", "linear_regression.stan"))
-model$sample(data = dat)
+# 12s to Compile
+# 0.3s sampling (Turing 2.4s)
+system.time(model <- cmdstan_model(
+    here::here(
+        "Stan",
+        "comparisons",
+        "cmdstanr-vs-turing.jl",
+        "linear_regression.stan"
+    )
+))
+fit <- model$sample(data = dat)
+fit$cmdstan_summary()
