@@ -35,7 +35,7 @@ double Mvn::lpdf(const Eigen::VectorXd &x) const {
 
 // Metropolis
 // [[Rcpp::export]]
-Eigen::MatrixXd metropolis_rcpp(int S, double width, double mu_X = 0,
+Rcpp::NumericMatrix metropolis_rcpp(int S, double width, double mu_X = 0,
                            double mu_Y = 0, double sigma_X = 1,
                            double sigma_Y = 1, double rho = 0.8) {
   Eigen::MatrixXd sigma(2, 2);
@@ -44,7 +44,7 @@ Eigen::MatrixXd metropolis_rcpp(int S, double width, double mu_X = 0,
   mean << mu_X, mu_Y;
   Mvn binormal(mean, sigma);
 
-  Eigen::MatrixXd out(S, 2);
+  Rcpp::NumericMatrix out(S, 2);
   double x = rnorm(1, 0, 1)[0];
   double y = rnorm(1, 0, 1)[0];
   double accepted = 0;
@@ -64,8 +64,8 @@ Eigen::MatrixXd metropolis_rcpp(int S, double width, double mu_X = 0,
       y = y_;
       accepted++;
     }
-    out(i, 0) = x;
-    out(i, 1) = y;
+    out[i, 0] = x;
+    out[i, 1] = y;
   }
   Rcout << "Acceptance rate is " << accepted / S << "\n";
 
