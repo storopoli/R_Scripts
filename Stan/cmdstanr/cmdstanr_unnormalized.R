@@ -20,5 +20,8 @@ data_sim <- list(
 vanilla <- cmdstan_model(here::here("Stan", "cmdstanr", "big_data.stan"))
 unnormalized <- cmdstan_model(here::here("Stan", "cmdstanr", "big_data_unnormalized.stan"))
 
-vanilla$sample(data = data_sim, seed = 123) # 1.7s lp__ -54776.20\
-unnormalized$sample(data = data_sim, seed = 123) # 1.7s lp__ -54776.20
+# 3.3s
+system.time(vanilla$sample(data = data_sim, seed = 123)) # 1.7s lp__ -54776.20\
+
+# 2.7s
+system.time(unnormalized$sample(data = data_sim, seed = 123)) # 1.7s lp__ -54776.20
