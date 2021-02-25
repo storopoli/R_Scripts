@@ -16,7 +16,7 @@ dat <- list(
 )
 
 # Vanilla Hierarchical Model
-# 11.7s Total
+# 11.7s Total / 8.5 M1 (89 divergences)
 vanilla <- cmdstan_model(here::here("Stan", "hierarchical_models", "hierarchical.stan"))
 vanilla_fit <- vanilla$sample(data = dat)
 vanilla_fit$summary()
@@ -25,8 +25,16 @@ vanilla_fit$summary()
 # 2.5s Total / 1.3s M1
 standard <- cmdstan_model(here::here("Stan", "hierarchical_models", "standard.stan"))
 standard_fit <- standard$sample(data = dat)
-standard_fit$summary()
+print(standard_fit$summary(), n = 15)
+
+# 2.2s M1
+# Non-Centered Parameterization Standardized Predictors (QR) Hierarchical model
+standard_ncp <- cmdstan_model(here::here("Stan", "hierarchical_models", "ncp_standard.stan"))
+standard_ncp_fit <- standard_ncp$sample(data = dat)
+print(standard_ncp_fit$summary(), n = 22)
 
 # brms
-# 0.8s M1
-brms_fit <- brm(hwy ~ 1 + (1 | class) + displ + year, data = mpg)
+# 0.7s M1
+brms_fit <- brm(bf(hwy ~ 1 + (1 | class) + displ + year, decomp = "QR"), data = mpg)
+summary(brms_fit)
+ranef(brms_fit)
