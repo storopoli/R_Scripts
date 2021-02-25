@@ -1,4 +1,4 @@
-hilbert<-function(n) 1/(outer(seq(n),seq(n),"+")-1)
+hilbert <- function(n) 1 / (outer(seq(n), seq(n), "+") - 1)
 print("hilbert n=500")
 print(system.time(eigen(hilbert(500))))
 print(system.time(eigen(hilbert(500))))
@@ -16,11 +16,13 @@ print(system.time(sort(rnorm(10^7))))
 print(system.time(sort(rnorm(10^7))))
 print(system.time(sort(rnorm(10^7))))
 # loess
-loess.me<-function(n) {
-print(paste("loess n=",as.character(n),sep=""))
-for (i in 1:5) {
-    x<-rnorm(10^n); y<-rnorm(10^n); z<-rnorm(10^n)
-    print(system.time(loess(z~x+y)))
+loess.me <- function(n) {
+    print(paste("loess n=", as.character(n), sep = ""))
+    for (i in 1:5) {
+        x <- rnorm(10^n)
+        y <- rnorm(10^n)
+        z <- rnorm(10^n)
+        print(system.time(loess(z ~ x + y)))
     }
 }
 loess.me(3)
