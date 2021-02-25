@@ -20,7 +20,7 @@ model {
   varying_alpha ~ normal(0, sigma_alpha);
   sigma ~ exponential(1/sd(y));
   sigma_alpha ~ exponential(0.1);
-  
+
   //likelihood
   y ~ normal(alpha + varying_alpha[id] + X * beta, sigma);
 }

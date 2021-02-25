@@ -2,6 +2,7 @@
 library(cmdstanr)
 library(posterior)
 library(rstanarm)
+library(brms)
 library(dplyr)
 library(ggplot2)
 library(latex2exp)
@@ -20,6 +21,7 @@ fit <- model$sample(data = dat)
 summ <- fit$summary(NULL, c("mean", "sd"))
 
 fit_rstanarm <- stan_glm(cbind(num_failure, 6 - num_failure) ~ temp, family = "binomial", data = df)
+fit_brms <- brm(num_failure | trials(6) ~ temp, family = "binomial", data = df)
 
 logit2prob <- function(logit) {
     odds <- exp(logit)

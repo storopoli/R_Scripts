@@ -20,4 +20,5 @@ generated quantities {
    for (n in 1:N) {
     log_lik[n] = binomial_logit_lpmf(failures[n] | o_rings, alpha + temp * beta);
   }
+   real y_rep[N] = bernoulli_logit_rng(alpha + temp * beta);
 }

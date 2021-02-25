@@ -10,7 +10,7 @@ transformed data {
   matrix[N, K] Q_ast;
   matrix[K, K] R_ast;
   matrix[K, K] R_ast_inverse;
-  
+
   // thin and scale the QR decomposition
   Q_ast = qr_thin_Q(X) * sqrt(N - 1);
   R_ast = qr_thin_R(X) / sqrt(N - 1);
@@ -26,15 +26,16 @@ parameters {
 model {
   //priors
   alpha ~ normal(mean(y), 2.5 * sd(y));
-  theta ~ student_t(3,0,1);
+  theta ~ student_t(3, 0, 1);
   varying_alpha ~ normal(0, sigma_alpha);
-  sigma ~ exponential(1/sd(y));
-  sigma_alpha ~ exponential(0.1);
-  
+  sigma ~ exponential(1 / sd(y));
+  sigma_alpha ~ cauchy(0, 2.5);
+
   //likelihood
   y ~ normal(alpha + varying_alpha[id] + Q_ast * theta, sigma);
 }
 generated quantities {
   vector[K] beta; //reconstructed population-level regression coefficients
   beta = R_ast_inverse * theta; // coefficients on X
+  real y_rep[N] = normal_rng(alpha + varying_alpha[id] + X * beta, sigma);
 }
