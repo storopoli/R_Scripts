@@ -1,7 +1,6 @@
 # Import Turing and Distributions.
 using Turing, Distributions, DynamicHMC
 using RDatasets
-#using BenchmarkTools
 # Functionality for splitting and normalizing the data.
 using MLDataUtils: shuffleobs, splitobs, rescale!
 
@@ -17,9 +16,9 @@ X = Matrix(select(data, Not(target)));
 target = data[:, target];
 
 # Standardize the features.
-μ, σ = rescale!(X; obsdim = 1);
+μ, σ = rescale!(X; obsdim=1);
 # Standardize the target
-μtarget, σtarget = rescale!(target; obsdim = 1);
+μtarget, σtarget = rescale!(target; obsdim=1);
 
 # Bayesian linear regression.
 @model function linear_regression(x, y)
@@ -45,14 +44,14 @@ println(Threads.nthreads())
 # 16s to Compile all Models
 
 # 1s to Sample
-@time nuts = sample(model, NUTS(), 2_000, drop_warmup = true);
+@time nuts = sample(model, NUTS(), 2_000, drop_warmup=true);
 
 
 # 1.8s To Sample
-@time nuts = sample(model, DynamicNUTS(), 2_000, drop_warmup = true);
+@time nuts = sample(model, DynamicNUTS(), 2_000, drop_warmup=true);
 
 
 # 2.8s to Sample
-@time parallel_chain = sample(model, DynamicNUTS(), MCMCThreads(), 2_000, 4, drop_warmup = true)
+@time parallel_chain = sample(model, DynamicNUTS(), MCMCThreads(), 2_000, 4, drop_warmup=true)
 
 oi = parallel_chain
