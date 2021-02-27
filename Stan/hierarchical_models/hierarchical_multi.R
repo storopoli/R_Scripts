@@ -22,13 +22,13 @@ dat <- list(
     K = ncol(X),
     jj = as.numeric(as.factor(mpg$class)),
     X = X,
-    L = 3,
+    L = ncol(X),
     u = u,
     y = mpg$hwy
 )
 
 # Vanilla Multivariate Hierarchical Model
-# Total 20.6s (1 divergences)
+# Total 15.4s (3 divergences)
 vanilla <- cmdstan_model(here::here("Stan", "hierarchical_models", "hierarchical_multi.stan"))
 vanilla_fit <- vanilla$sample(data = dat)
 print(vanilla_fit$summary(), n = 90)
@@ -40,9 +40,9 @@ standard_fit <- standard$sample(data = dat)
 print(standard_fit$summary(), n = 100)
 
 # brms
-# Total 10.9s M1 (32 divergences)
+# Total 5.6s M1 (32 divergences)
 brms_fit <- brm(
-    bf(hwy ~ 1 + (1 + displ + year | class), decomp = "QR"),
+    bf(hwy ~ 1 + displ + year + (1 + displ + year | class), decomp = "QR"),
     data = mpg,
     prior = c(
         set_prior("lkj(2)", class = "cor"),

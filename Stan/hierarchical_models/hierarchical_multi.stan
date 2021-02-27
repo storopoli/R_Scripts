@@ -9,7 +9,7 @@ data {
   vector[N] y;                  // the response variable
 }
 parameters {
-  real alpha;                                // Population-level Intercept
+  //real alpha;                                // Population-level Intercept
   matrix[K, J] z;                            // Non-centered Correlation Matrix
   cholesky_factor_corr[K] L_Omega;           // Correlation Sigma = LL^T
   vector<lower=0,upper=pi()/2>[K] tau_unif;  // Non-centered scale implies tau_unif ~ uniform(0,pi()/2)
@@ -24,7 +24,7 @@ transformed parameters {
 }
 model {
   // priors
-  alpha ~ normal(mean(y), 2.5 * sd(y));
+  //alpha ~ normal(mean(y), 2.5 * sd(y));
   to_vector(z) ~ std_normal();         // Z ~ N(0, 1)
   L_Omega ~ lkj_corr_cholesky(2);      // Correlation Sigma = LL^T
   to_vector(gamma) ~ normal(0, 5);     // Priors on Group Coeffs
