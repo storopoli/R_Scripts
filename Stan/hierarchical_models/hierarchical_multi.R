@@ -5,16 +5,6 @@ library(dplyr)
 mpg <- ggplot2::mpg
 
 X <- unname(model.matrix(~ 1 + displ + year, mpg))
-u <- mpg %>%
-    group_by(class) %>%
-    select(displ, year) %>%
-    summarise_all(mean) %>%
-    select(-class) %>%
-    bind_cols(1, .) %>%
-    mutate_all(function(x) 1 / x) %>%
-    t() %>%
-    as.matrix() %>%
-    unname()
 
 dat <- list(
     N = nrow(X),
@@ -22,13 +12,13 @@ dat <- list(
     K = ncol(X),
     jj = as.numeric(as.factor(mpg$class)),
     X = X,
-    L = ncol(X),
-    u = u,
+    L = 1,
+    u = t(as.matrix(rep(1, length(unique(mpg$class))))),
     y = mpg$hwy
 )
 
 # Vanilla Multivariate Hierarchical Model
-# Total 15.4s (3 divergences)
+# Total 20.4s M1 (7 divergences)
 vanilla <- cmdstan_model(here::here("Stan", "hierarchical_models", "hierarchical_multi.stan"))
 vanilla_fit <- vanilla$sample(data = dat)
 print(vanilla_fit$summary(), n = 90)
@@ -40,7 +30,7 @@ standard_fit <- standard$sample(data = dat)
 print(standard_fit$summary(), n = 100)
 
 # brms
-# Total 5.6s M1 (32 divergences)
+# Total 5.6s M1 (53 divergences)
 brms_fit <- brm(
     bf(hwy ~ 1 + displ + year + (1 + displ + year | class), decomp = "QR"),
     data = mpg,
