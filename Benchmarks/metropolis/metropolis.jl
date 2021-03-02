@@ -3,13 +3,13 @@ using Distributions
 using FLoops
 
 function metropolis(S::Int64, width::Float64, ρ::Float64;
-                    μ_x::Float64 = 0.0, μ_y::Float64 = 0.0,
-                    σ_x::Float64 = 1.0, σ_y::Float64 = 1.0)
+                    μ_x::Float64=0.0, μ_y::Float64=0.0,
+                    σ_x::Float64=1.0, σ_y::Float64=1.0)
     binormal = MvNormal([μ_x; μ_y], [σ_x ρ; ρ σ_y]);
     draws = Matrix{Float64}(undef, S, 2);
     x = randn(); y = randn();
     accepted = 0::Int64;
-    for s in 1:S
+    @simd for s in 1:S
         x_ = rand(Uniform(x - width, x + width));
         y_ = rand(Uniform(y - width, y + width));
         r = exp(logpdf(binormal, [x_, y_]) - logpdf(binormal, [x, y]));
@@ -26,8 +26,8 @@ function metropolis(S::Int64, width::Float64, ρ::Float64;
 end
 
 function metropolis_parallel(S::Int64, width::Float64, ρ::Float64;
-                            μ_x::Float64 = 0.0, μ_y::Float64 = 0.0,
-                            σ_x::Float64 = 1.0, σ_y::Float64 = 1.0)
+                            μ_x::Float64=0.0, μ_y::Float64=0.0,
+                            σ_x::Float64=1.0, σ_y::Float64=1.0)
     binormal = MvNormal([μ_x; μ_y], [σ_x ρ; ρ σ_y]);
     draws = Matrix{Float64}(undef, S, 2);
     x = randn(); y = randn();

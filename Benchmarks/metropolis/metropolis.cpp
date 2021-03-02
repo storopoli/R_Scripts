@@ -1,14 +1,16 @@
 // http://blog.sarantop.com/notes/mvn
-// sudo clang++ -I/usr/local/include/eigen3 -L/usr/local/opt/catch2/lib -I/usr/local/opt/catch2/include metropolis.cpp -o metropolis.out
+// sudo clang++ -I/usr/local/include/eigen3 -L/usr/local/opt/catch2/lib
+// -I/usr/local/opt/catch2/include metropolis.cpp -o metropolis.out
 
 #define CATCH_CONFIG_MAIN
 #define CATCH_CONFIG_ENABLE_BENCHMARKING
 #include <Eigen/Eigen>
-#include "catch2/catch.hpp"
 #include <cmath>
 #include <iostream>
 #include <random>
 #include <vector>
+
+#include "catch2/catch.hpp"
 
 using std::cout;
 std::random_device rd{};
@@ -54,10 +56,10 @@ double Mvn::lpdf(const Eigen::VectorXd &x) const {
   return log(norm) + (-0.5 * quadform);
 }
 
-// Metropolis
-Eigen::MatrixXd metropolis(int S, double width, double mu_X = 0,
-                           double mu_Y = 0, double sigma_X = 1,
-                           double sigma_Y = 1, double rho = 0.8) {
+// Metropolis Eigen
+Eigen::MatrixXd metropolis_eigen(int S, double width, double mu_X = 0,
+                                 double mu_Y = 0, double sigma_X = 1,
+                                 double sigma_Y = 1, double rho = 0.8) {
   Eigen::MatrixXd sigma(2, 2);
   sigma << sigma_X, rho, rho, sigma_Y;
   Eigen::VectorXd mean(2);
@@ -92,8 +94,49 @@ Eigen::MatrixXd metropolis(int S, double width, double mu_X = 0,
   return out;
 }
 
-TEST_CASE("Metropolis") {
-    BENCHMARK("Metropolis 10k"){ return metropolis(10'000, 2.75); };
+// Metropolis STL
+std::vector<std::vector<double>> metropolis_stl(
+    int S, double width, double mu_X = 0, double mu_Y = 0, double sigma_X = 1,
+    double sigma_Y = 1, double rho = 0.8) {
+  Eigen::MatrixXd sigma(2, 2);
+  sigma << sigma_X, rho, rho, sigma_Y;
+  Eigen::VectorXd mean(2);
+  mean << mu_X, mu_Y;
+  Mvn binormal(mean, sigma);
+
+  std::vector<std::vector<double>> out;
+  double x = random_normal();
+  double y = random_normal();
+  double accepted = 0;
+  for (size_t i = 0; i < S - 1; i++) {
+    double xmw = x - width;
+    double xpw = x + width;
+    double ymw = y - width;
+    double ypw = y + width;
+
+    double x_ = random_unif(xmw, xpw);
+    double y_ = random_unif(ymw, ypw);
+
+    double r = std::exp(binormal.lpdf(Eigen::Vector2d(x_, y_)) -
+                        binormal.lpdf(Eigen::Vector2d(x, y)));
+    if (r > random_unif()) {
+      x = x_;
+      y = y_;
+      accepted++;
+    }
+    out.push_back(std::vector<double>{x, y});
+  }
+  cout << "Acceptance rate is " << accepted / S << "\n";
+
+  return out;
+}
+
+TEST_CASE("Metropolis Eigen") {
+  BENCHMARK("Metropolis 10k Eigen") { return metropolis_eigen(10'000, 2.75); };
+}
+
+TEST_CASE("Metropolis STL") {
+  BENCHMARK("Metropolis 10k STL") { return metropolis_stl(10'000, 2.75); };
 }
 
 // int main() {
