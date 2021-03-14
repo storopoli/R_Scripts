@@ -49,10 +49,9 @@ double BiNormal::pdf(const std::vector<double> &x) const {
 double BiNormal::lpdf(const std::vector<double> &x) const {
   double x_ = x[0];
   double y_ = x[1];
-  return std::log(
-      std::exp(-((std::pow(x_, 2) - (2 * rho * x_ * y_) + std::pow(y_, 2)) /
-                 (2 * (1 - std::pow(rho, 2))))) /
-      (2 * M_PI * std::sqrt(1 - std::pow(rho, 2))));
+  return (-((std::pow(x_, 2) - (2 * rho * x_ * y_) + std::pow(y_, 2))) /
+          (2 * (1 - std::pow(rho, 2)))) -
+         std::log(2) - std::log(M_PI) - log(std::sqrt(1 - std::pow(rho, 2)));
 }
 
 // Metropolis STL
