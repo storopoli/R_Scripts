@@ -11,6 +11,7 @@ width <- 2.75
 
 # Eigen C++ is 592ms +/- 37ms
 # STL C++ is 594ms +/- 10ms
+# Bivariate STL C++ is 17ms
 # Stan is 3.6ms
 # Rcpp is 20ms
 # R is 1.35s
