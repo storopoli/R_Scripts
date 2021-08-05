@@ -17,13 +17,25 @@ dat <- list(
     y = mpg$hwy
 )
 
-# 2.2s Dell / M1
+# 1.3s Ryzen 5950X
 # Non-Centered Parameterization Standardized Predictors (QR) Hierarchical model
 standard_ncp <- cmdstan_model(here::here("Stan", "hierarchical_models", "ncp_standard.stan"))
 standard_ncp_fit <- standard_ncp$sample(data = dat)
 print(standard_ncp_fit$summary(), n = 22)
 
-# 586s RTX 2060
+# 1.3s Ryzen 5950X
+# Non-Centered Parameterization Standardized Predictors (QR) Hierarchical model
+standard_ncp_norange <- cmdstan_model(
+    here::here("Stan", "hierarchical_models", "ncp_standard.stan"),
+    cpp_options = list(
+        stan_no_range_checks = TRUE,
+        stan_threads = TRUE
+    )
+)
+standard_ncp_norange_fit <- standard_ncp_norange$sample(data = dat, threads_per_chain = 8, parallel_chains = 4)
+print(standard_ncp_fit$summary(), n = 22)
+
+# 854s RTX 3070Ti
 # Non-Centered Parameterization Standardized Predictors (QR) Hierarchical model
 standard_ncp_cl <- cmdstan_model(here::here("Stan", "hierarchical_models", "ncp_standard.stan"),
     cpp_options = list(stan_opencl = TRUE)
